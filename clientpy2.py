@@ -25,8 +25,8 @@ def run(user, password, *commands):
         rline = sfile.readline()
         while rline:
             #  print(rline.strip())
-            rline = sfile.readline()
             lines.append(rline)
+            rline = sfile.readline()
     finally:
         sock.close()
     return lines
@@ -57,9 +57,12 @@ def securities():
     return secs
 
 def highest_dividend():
-    return sorted(securities(),
+    sortsec =  sorted(securities(),
             key=(lambda x: x[1] * x[2]), 
             reverse=True)
+    for sec in sortsec:
+        ords = orders().filter(lambda x: x[1] == sec[0])
+        print sec[0], sec[1] * sec[2], ords[0][3]
 
 def map_tickers(command):
     commands = map(lambda x: command + ' ' + x, tickers)
@@ -83,3 +86,7 @@ def orders():
 # Total value (cash + stocks)
 def portfolio():
     return
+
+def order_book():
+    for order in orders():
+        print order
