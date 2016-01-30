@@ -10,7 +10,7 @@ def buy(sym):
     # Find lowest ask price
     o = min(filter(lambda x: x[0] == 'ASK' and x[1] == sym, orders()),
             key = itemgetter(2))
-    n = int(floor(0.05 * balance() / o[2]))
+    n = int(floor(0.20 * balance() / o[2]))
     run(user, password, 'BID {} {} {}'.format(sym, o[2], n))
 
 def average(tckr):
@@ -85,31 +85,25 @@ def moving_average():
 def main():
     for i in range(100):
         print '\nMoney: ', balance()
+        hd = highest_dividend()
 
-        sleep(1)
-        avgs = sorted(moving_average(), key=lambda tup: tup[4])
+        sleep(0.1)
+        avgs = sorted(moving_average(), key=lambda tup: tup[3])
 
         j = 0
         while j < 3: # Buy if mv3 > mv10
             j += 1
             buy(avgs[j][0])
 
-        avgs.reverse()
-        j = 0
-        while j < 3:
-            j += 1
-            sell(avgs[j][0])
+        #  j = 0
+        #  while j < 7:
+            #  j += 1
+            #  sell(avgs[j][0])
 
-        #  if i % 10 == 0:
-            #  hd = highest_dividend()
-            #  hd.reverse()
-            #  sold = 0
-            #  for stock in hd:
-                #  if stock in map(itemgetter(1), my_orders()):
-                    #  sell(stock)
-                    #  sold = sold + 1
-                    #  if sold > 3:
-                        #  break
+        #  hd.reverse()
+        avgs.reverse()
+        for j in range(7):
+            sell(avgs[j][0])
 
         print 'My Orders: '
         my_orders(True)

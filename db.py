@@ -19,8 +19,8 @@ def save_orders(time):
     try:
         for t in range(time):
             print 'Saving time step', t
-            client.sleep(1)
-            for o in client.orders():
+            sleep(1)
+            for o in orders():
                 if o[0] == 'BID':
                     c.execute("INSERT INTO bids VALUES (?, ?, ?, ?)",
                         [t,o[1],o[2],o[3]])
