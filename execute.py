@@ -30,8 +30,9 @@ def moving_average():
     return avgs
 
 def main():
-    print 'Money: ', balance()
     for i in range(100):
+        print 'Money: ', balance()
+
         sleep(1)
         clear_all()
         avgs = sorted(moving_average(), key=lambda tup: (tup[2] - tup[1]))
@@ -47,8 +48,10 @@ def main():
             j += 1
             sell(avgs[j][0])
 
+        print 'My Orders: '
         my_orders(True)
+
+        print 'My Portfolio: '
         my_securities(True)
-    #  print client.tabulate(moving_average())
 
 main()

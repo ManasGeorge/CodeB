@@ -62,15 +62,14 @@ def my_securities(debug = False):
     for sec in secs:
         ret[sec[0]] = (float(sec[1]), float(sec[2]))
     if(debug):
-        print tabulate(ret, headers="keys")
+        print tabulate(ret, headers="keys"),
     return ret
 
 def my_orders(debug = False):
     secs = run(user,password,'MY_ORDERS')[0].split()[1:]
-    secs = [secs[i:i+3] for i in range(0,len(secs),3)]
+    secs = [secs[i:i+4] for i in range(0,len(secs),4)]
     if(debug):
-        for sec in secs:
-            print sec
+        print tabulate(secs),
 
 def highest_dividend(debug = False):
     nshares = defaultdict(lambda: 0)
@@ -85,7 +84,7 @@ def highest_dividend(debug = False):
                 nshares[sec[0]] / 2], 
             sortsec)
     if debug:
-        print tabulate(table, headers = ["Ticker", "Dividend per Share", "Total Dividend", "Shares being traded"])
+        print tabulate(table, headers = ["Ticker", "Dividend per Share", "Total Dividend", "Shares being traded"]),
     return table
 
 def map_tickers(command):

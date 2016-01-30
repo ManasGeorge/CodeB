@@ -19,7 +19,7 @@ def save_orders(time):
     try:
         for t in range(time):
             print 'Saving time step', t
-            client.sleep(.1)
+            client.sleep(1)
             for o in client.orders():
                 if o[0] == 'BID':
                     c.execute("INSERT INTO bids VALUES (?, ?, ?, ?)",
@@ -44,7 +44,3 @@ def retrieve_orders(asks = True):
         conn.commit()
     conn.close()
     return prices
-
-#  make_table()
-#  save_orders(100)
-#  a = retrieve_orders()
