@@ -38,13 +38,13 @@ def main():
         avgs = sorted(moving_average(), key=lambda tup: (tup[2] - tup[1]))
 
         j = 0
-        while avgs[j][1] > avgs[j][2]: # Buy if mv3 > mv10
+        while avgs[j][1] > avgs[j][2] and j < len(avgs): # Buy if mv3 > mv10
             j += 1
             buy(avgs[j][0])
 
         avgs.reverse()
         j = 0
-        while avgs[j][1] > avgs[j][2]:
+        while avgs[j][1] > avgs[j][2] and j < len(avgs):
             j += 1
             sell(avgs[j][0])
 
