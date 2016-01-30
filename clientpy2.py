@@ -6,30 +6,27 @@ from time import sleep
 user = 'Cactus'
 password = 'carnot'
 tickers = ['AAPL', 'C', 'CMG', 'DELL', 'DIS', 'F', 'GM', 'IBM', 'JPY', 'XOM'] 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-def main():
-    global sock
-    HOST, PORT = "codebb.cloudapp.net", 17429
-    try:
-        sock.connect((HOST, PORT))
-        divs = highest_dividend()
-        divs = map(lambda x: (x[0], x[1]*x[2]), divs)
-        print highest_dividend()
-    finally:
-        sock.close()
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# Server connection overhead is low enough that we can afford to use multiple calls
+# to run for securities() and order() and stuff.
     
 def run(user, password, *commands):
+    HOST, PORT = "codebb.cloudapp.net", 17429
+    
     data=user + " " + password + "\n" + "\n".join(commands) + "\nCLOSE_CONNECTION\n"
-    lines = []
-    sock.sendall(data)
-    sfile = sock.makefile()
-    rline = sfile.readline()
-    while rline:
-        lines.append(rline)
+
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        sock.connect((HOST, PORT))
+        sock.sendall(data)
+        sfile = sock.makefile()
         rline = sfile.readline()
-    return lines
+        while rline:
+            print(rline.strip())
+            rline = sfile.readline()
+    finally:
+        sock.close()
 
 def subscribe(user, password):
     HOST, PORT = "codebb.cloudapp.net", 17429
