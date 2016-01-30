@@ -3,6 +3,7 @@ import sys
 from operator import itemgetter
 from time import sleep
 from collections import defaultdict
+from tabulate import tabulate
 
 user = 'Cactus'
 password = 'carnot'
@@ -63,8 +64,12 @@ def highest_dividend():
     sortsec =  sorted(securities(),
             key=(lambda x: x[1] * x[2] / nshares[x[0]]), 
             reverse=True)
-    for sec in sortsec:
-        print sec[0], sec[1] * sec[2] / nshares[sec[0]], sec[1] * sec[2], nshares[sec[0]]
+    table = map(lambda sec: 
+            [sec[0], sec[1] * sec[2] / nshares[sec[0]], 
+                sec[1] * sec[2], 
+                nshares[sec[0]]], 
+            sortsec)
+    print tabulate(table, headers = ["Ticker", "Dividend per Share", "Total Dividend", "Shares being traded"])
 
 def map_tickers(command):
     commands = map(lambda x: command + ' ' + x, tickers)
@@ -90,7 +95,6 @@ def portfolio():
     return
 
 def order_book():
-    for order in orders():
-        print order
+    print tabulate(orders())
 
 tickers = map(itemgetter(0), securities())
