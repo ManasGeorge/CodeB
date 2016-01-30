@@ -13,31 +13,37 @@ def make_table():
     conn.commit()
     conn.close()
 
-def save_orders():
+def save_orders(time):
     conn = sqlite3.connect(dbname)
     c = conn.cursor()
-    t = 0
     try:
-        while(1):
+        for t in range(time):
+            print 'Saving time step', t
             sleep(1)
             for o in orders():
                 if o[0] == 'BID':
-                    print c.execute("INSERT INTO bids VALUES ({}, '{}', {}, {})"
-                            .format(t,o[1],o[2],o[3]))
+                    c.execute("INSERT INTO bids VALUES (?, ?, ?, ?)",
+                        [t,o[1],o[2],o[3]])
                 elif o[0] == 'ASK':
-                    print c.execute("INSERT INTO asks VALUES ({}, '{}', {}, {})"
-                            .format(t,o[1],o[2],o[3]))
-            t = t + 1
+                    c.execute("INSERT INTO asks VALUES (?, ?, ?, ?)",
+                        [t,o[1],o[2],o[3]])
     finally:
         conn.commit()
         conn.close()
 
-def retrieve_orders():
+def retrieve_orders(asks = True):
     conn = sqlite3.connect(dbname)
     c = conn.cursor()
-    print c.execute('SELECT * FROM bids').fetchall()
-    conn.commit()
+    prices = {}
+    table = 'asks' if asks else 'bids'
+    for sym in tickers:
+        prices[sym] = c.execute('SELECT val FROM {} WHERE sym=? ORDER BY time'
+                .format(table), (sym, )).fetchall() 
+        prices[sym] = map(itemgetter(0), prices[sym])
+        conn.commit()
     conn.close()
+    return prices
 
 make_table()
-save_orders()
+save_orders(4)
+a = retrieve_orders()
