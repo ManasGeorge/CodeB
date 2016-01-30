@@ -31,7 +31,7 @@ def moving_average():
 
 def main():
     for i in range(100):
-        print 'Money: ', balance()
+        print '\nMoney: ', balance()
 
         sleep(1)
         clear_all()

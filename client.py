@@ -62,14 +62,16 @@ def my_securities(debug = False):
     for sec in secs:
         ret[sec[0]] = (float(sec[1]), float(sec[2]))
     if(debug):
-        print tabulate(ret, headers="keys"),
+        print tabulate(ret, headers="keys")
+        print
     return ret
 
 def my_orders(debug = False):
     secs = run(user,password,'MY_ORDERS')[0].split()[1:]
     secs = [secs[i:i+4] for i in range(0,len(secs),4)]
     if(debug):
-        print tabulate(secs),
+        print tabulate(secs)
+        print
 
 def highest_dividend(debug = False):
     nshares = defaultdict(lambda: 0)
