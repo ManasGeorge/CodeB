@@ -45,7 +45,7 @@ def subscribe(user, password):
     finally:
         sock.close()
 
-def pull_stocks():
+def securities():
     # Ticker, Net Worth, Div. Ratio, Volatility
     secs = run(user,password,'SECURITIES')[0].split()[1:]
     secs = [secs[i:i+4] for i in range(0,len(secs),4)]
@@ -57,11 +57,24 @@ def highest_dividend():
             key=(lambda x: x[1] * x[2]), 
             reverse=True)
 
+def map_tickers(command):
+    commands = map(lambda x: command + ' ' + x, tickers)
+    return run(user, password, *commands)
+
 # Clears all asks and bids
 def clear_all():
-    clears = map(lambda x: 'CLEAR_BID ' + x, tickers)
-    clears.extend(map(lambda x: 'CLEAR_ASK ' + x, tickers))
-    return run(user, password, *clears)
+    ret = map_tickers('CLEAR_BID')
+    ret.extend(map_tickers('CLEAR_BID'))
+    return ret
+
+# Return all orders that are out
+def orders():
+    ords = map_tickers('ORDERS')
+    ords = map(lambda x: x.split()[1:], ords) # Remove 'SECURITY_ORDERS_OUT' and split
+    ords = map(lambda x: [x[i:i+4] for i in range(0,len(x),4)], ords) # Split each bid/ask into separate list
+    ords = [bidask for order in ords for bidask in order]
+    ords = map(lambda x: (x[0], x[1], float(x[2]), int(x[3])), ords)
+    return ords
 
 # Total value (cash + stocks)
 def portfolio():
