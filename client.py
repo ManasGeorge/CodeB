@@ -11,7 +11,7 @@ password = 'carnot'
 
 def run(user, password, *commands):
     HOST, PORT = "codebb.cloudapp.net", 17429
-    
+
     data=user + " " + password + "\n" + "\n".join(commands) + "\nCLOSE_CONNECTION\n"
 
     try:
@@ -32,7 +32,7 @@ def run(user, password, *commands):
 
 def subscribe(user, password):
     HOST, PORT = "codebb.cloudapp.net", 17429
-    
+
     data=user + " " + password + "\nSUBSCRIBE\n"
 
     try:
@@ -79,13 +79,16 @@ def highest_dividend(debug = False):
     for order in orders():
         nshares[order[1]] = nshares[order[1]] + order[3]
     sortsec =  sorted(securities(),
-            key=(lambda x: x[1] * x[2] / nshares[x[0]]), 
+            key=(lambda x: x[1] * x[2] / nshares[x[0]]),
             reverse=True)
-    table = map(lambda sec: 
-            [sec[0], sec[1] * sec[2] / nshares[sec[0]], 
-                sec[1] * sec[2], 
-                nshares[sec[0]] / 2], 
-            sortsec)
+    table = map(lambda sec:
+            [sec[0], sec[1] * sec[2] / nshares[sec[0]],
+                sec[1] * sec[2],
+                nshares[sec[0]]],
+    table = map(lambda sec:
+            [sec[0], sec[1] * sec[2] / nshares[sec[0]],
+                sec[1] * sec[2],
+                nshares[sec[0]] / 2], sortsec)
     if debug:
         print tabulate(table, headers = ["Ticker", "Dividend per Share", "Total Dividend", "Shares being traded"]),
     return table
@@ -111,6 +114,13 @@ def orders():
 
 def order_book():
     print tabulate(orders())
+
+def stock_exchange():
+    secs = securities()
+    se = 0
+    for sec in secs:
+        se += sec[1]
+    return se
 
 def balance():
     return float(run(user, password, 'MY_CASH')[0].split()[1])

@@ -1,5 +1,5 @@
 import sqlite3
-import client
+from client import *
 
 dbname = 'orders.db'
 
@@ -39,7 +39,9 @@ def retrieve_orders(asks = True):
     pricefunc = 'MIN' if asks else 'MAX'
     for sym in client.tickers:
         prices[sym] = c.execute('SELECT {}(val) FROM {} WHERE sym=? GROUP BY time ORDER BY time'
-                .format(pricefunc, table), (sym, )).fetchall() 
+                .format(pricefunc, table), (sym, )).fetchall()
+        prices[sym] = map(itemgetter(0), prices[sym])
+                .format(pricefunc, table), (sym, )).fetchall()
         prices[sym] = map(client.itemgetter(0), prices[sym])
         conn.commit()
     conn.close()
