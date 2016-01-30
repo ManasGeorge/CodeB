@@ -22,11 +22,14 @@ def sell(sym):
 def moving_average():
     avgs = []
     prices = retrieve_orders(False) #get bids
+    divMap = dividend_map()
     for t in tickers:
         l = prices[t]
         mv3 = reduce(lambda x, y: x + y, l[(len(l) - 3):]) / 3
         mv10 = reduce(lambda x, y: x + y, l[(len(l) - 10):]) / 10
-        avgs.append((t, mv3, mv10))
+        mv3n1 = reduce(lambda x, y: x + y, l[(len(l) - 4):(len(l) - 1)]) / 3
+        mv10n1 = reduce(lambda x, y: x + y, l[(len(l) - 9):(len(l) - 1)]) / 10
+        avgs.append((t, mv3, mv10, divMap[t], (mv3 - mv10) - (mv3n1 - mv10n1) + divMap[t]))
     return avgs
 
 def main():
@@ -35,16 +38,16 @@ def main():
 
         sleep(1)
         clear_all()
-        avgs = sorted(moving_average(), key=lambda tup: (tup[2] - tup[1]))
+        avgs = sorted(moving_average(), key=lambda tup: tup[4])
 
         j = 0
-        while avgs[j][1] > avgs[j][2] and j < len(avgs): # Buy if mv3 > mv10
+        while j < 3: # Buy if mv3 > mv10
             j += 1
             buy(avgs[j][0])
 
         avgs.reverse()
         j = 0
-        while avgs[j][1] > avgs[j][2] and j < len(avgs):
+        while j < 3:
             j += 1
             sell(avgs[j][0])
 
