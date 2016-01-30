@@ -36,14 +36,15 @@ def retrieve_orders(asks = True):
     c = conn.cursor()
     prices = {}
     table = 'asks' if asks else 'bids'
+    pricefunc = 'MIN' if asks else 'MAX'
     for sym in tickers:
-        prices[sym] = c.execute('SELECT val FROM {} WHERE sym=? ORDER BY time'
-                .format(table), (sym, )).fetchall() 
+        prices[sym] = c.execute('SELECT {}(val) FROM {} WHERE sym=? GROUP BY time ORDER BY time'
+                .format(pricefunc, table), (sym, )).fetchall() 
         prices[sym] = map(itemgetter(0), prices[sym])
         conn.commit()
     conn.close()
     return prices
 
-make_table()
-save_orders(4)
-a = retrieve_orders()
+#  make_table()
+#  save_orders(100)
+#  a = retrieve_orders()

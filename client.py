@@ -9,9 +9,6 @@ from tabulate import tabulate
 user = 'Cactus'
 password = 'carnot'
 
-# Server connection overhead is low enough that we can afford to use multiple calls
-# to run for securities() and order() and stuff.
-
 def run(user, password, *commands):
     HOST, PORT = "codebb.cloudapp.net", 17429
     
@@ -90,10 +87,6 @@ def orders():
     ords = [bidask for order in ords for bidask in order]
     ords = map(lambda x: (x[0], x[1], float(x[2]), int(x[3])), ords)
     return ords
-
-# Total value (cash + stocks)
-def portfolio():
-    return
 
 def order_book():
     print tabulate(orders())
