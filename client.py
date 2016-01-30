@@ -1,5 +1,6 @@
 import socket
 import sys
+import sqlite3
 from operator import itemgetter
 from time import sleep
 from collections import defaultdict
@@ -13,7 +14,7 @@ password = 'carnot'
 
 def run(user, password, *commands):
     HOST, PORT = "codebb.cloudapp.net", 17429
-
+    
     data=user + " " + password + "\n" + "\n".join(commands) + "\nCLOSE_CONNECTION\n"
 
     try:
@@ -34,7 +35,7 @@ def run(user, password, *commands):
 
 def subscribe(user, password):
     HOST, PORT = "codebb.cloudapp.net", 17429
-
+    
     data=user + " " + password + "\nSUBSCRIBE\n"
 
     try:
@@ -57,14 +58,12 @@ def securities():
     secs = map(lambda x: (x[0], float(x[1]), float(x[2]), float(x[3])), secs)
     return secs
 
-tickers = map(itemgetter(0), securities())
-
 def highest_dividend():
     nshares = defaultdict(lambda: 1)
     for order in orders():
         nshares[order[1]] = nshares[order[1]] + order[3]
     sortsec =  sorted(securities(),
-            key=(lambda x: x[1] * x[2] / nshares[x[0]]),
+            key=(lambda x: x[1] * x[2] / nshares[x[0]]), 
             reverse=True)
     table = map(lambda sec: 
             [sec[0], sec[1] * sec[2] / nshares[sec[0]], 
@@ -93,32 +92,10 @@ def orders():
     return ords
 
 # Total value (cash + stocks)
-def my_cash():
-    my = float(run(user, password, "MY_CASH"))
+def portfolio():
     return
 
-def my_stocks():
-    secs = run(user,password,'MY_SECURITIES')[0].split()[1:]
-    secs = [secs[i:i+3] for i in range(0,len(secs),3)]
-    secs = map(lambda x: (x[0], float(x[1]), float(x[2])), secs)
-    return secs
-
 def order_book():
-<<<<<<< HEAD
-        print order
-
-# alpha():
-
-def stock_exchange():
-    secs = securities()
-    se = 0
-    for sec in secs:
-        se += sec[1]
-    return se
-
-print stock_exchange()
-=======
     print tabulate(orders())
 
 tickers = map(itemgetter(0), securities())
->>>>>>> master
