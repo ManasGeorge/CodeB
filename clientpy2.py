@@ -98,3 +98,18 @@ def order_book():
     print tabulate(orders())
 
 tickers = map(itemgetter(0), securities())
+
+def moving_average():
+    avgs = []
+    for t in tickers:
+        #l = get hist[t]
+        l = [0.35, 0.4, 0.45, 0.5, 0.55, 0.6, .65, .7, .75, .8, .85, .9, .95]
+
+        mv3 = reduce(lambda x, y: x + y, l[(len(l) - 3):]) / 3
+        mv10 = reduce(lambda x, y: x + y, l[(len(l) - 10):]) / 10
+        avgs.append((t, mv3, mv10, (mv3 - mv10)))
+
+    return avgs
+
+print tabulate(moving_average())
+    

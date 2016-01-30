@@ -55,8 +55,26 @@ def securities():
     secs = map(lambda x: (x[0], float(x[1]), float(x[2]), float(x[3])), secs)
     return secs
 
-def highest_dividend():
-    nshares = defaultdict(lambda: 1)
+def my_securities(debug = False):
+    ret = {}
+    secs = run(user,password,'MY_SECURITIES')[0].split()[1:]
+    secs = [secs[i:i+3] for i in range(0,len(secs),3)]
+    for sec in secs:
+        ret[sec[0]] = (float(sec[1]), float(sec[2]))
+    if(debug):
+        print tabulate(ret, headers="keys")
+        print
+    return ret
+
+def my_orders(debug = False):
+    secs = run(user,password,'MY_ORDERS')[0].split()[1:]
+    secs = [secs[i:i+4] for i in range(0,len(secs),4)]
+    if(debug):
+        print tabulate(secs)
+        print
+
+def highest_dividend(debug = False):
+    nshares = defaultdict(lambda: 0)
     for order in orders():
         nshares[order[1]] = nshares[order[1]] + order[3]
     sortsec =  sorted(securities(),
@@ -66,8 +84,13 @@ def highest_dividend():
             [sec[0], sec[1] * sec[2] / nshares[sec[0]],
                 sec[1] * sec[2],
                 nshares[sec[0]]],
-            sortsec)
-    print tabulate(table, headers = ["Ticker", "Dividend per Share", "Total Dividend", "Shares being traded"])
+    table = map(lambda sec:
+            [sec[0], sec[1] * sec[2] / nshares[sec[0]],
+                sec[1] * sec[2],
+                nshares[sec[0]] / 2], sortsec)
+    if debug:
+        print tabulate(table, headers = ["Ticker", "Dividend per Share", "Total Dividend", "Shares being traded"]),
+    return table
 
 def map_tickers(command):
     commands = map(lambda x: command + ' ' + x, tickers)
@@ -97,5 +120,8 @@ def stock_exchange():
     for sec in secs:
         se += sec[1]
     return se
+
+def balance():
+    return float(run(user, password, 'MY_CASH')[0].split()[1])
 
 tickers = map(itemgetter(0), securities())
