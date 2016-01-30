@@ -6,14 +6,13 @@ from collections import defaultdict
 
 user = 'Cactus'
 password = 'carnot'
-tickers = map(itemgetter(0), securities())
 
 # Server connection overhead is low enough that we can afford to use multiple calls
 # to run for securities() and order() and stuff.
 
 def run(user, password, *commands):
     HOST, PORT = "codebb.cloudapp.net", 17429
-    
+
     data=user + " " + password + "\n" + "\n".join(commands) + "\nCLOSE_CONNECTION\n"
 
     try:
@@ -34,7 +33,7 @@ def run(user, password, *commands):
 
 def subscribe(user, password):
     HOST, PORT = "codebb.cloudapp.net", 17429
-    
+
     data=user + " " + password + "\nSUBSCRIBE\n"
 
     try:
@@ -57,12 +56,14 @@ def securities():
     secs = map(lambda x: (x[0], float(x[1]), float(x[2]), float(x[3])), secs)
     return secs
 
+tickers = map(itemgetter(0), securities())
+
 def highest_dividend():
     nshares = defaultdict(lambda: 1)
     for order in orders():
         nshares[order[1]] = nshares[order[1]] + order[3]
     sortsec =  sorted(securities(),
-            key=(lambda x: x[1] * x[2] / nshares[x[0]]), 
+            key=(lambda x: x[1] * x[2] / nshares[x[0]]),
             reverse=True)
     for sec in sortsec:
         #  ords = filter(lambda x: x[1] == sec[0], orders())
@@ -88,9 +89,26 @@ def orders():
     ords = map(lambda x: (x[0], x[1], float(x[2]), int(x[3])), ords)
 
 # Total value (cash + stocks)
-def portfolio():
+def my_cash():
+    my = float(run(user, password, "MY_CASH"))
     return
 
+def my_stocks():
+    secs = run(user,password,'MY_SECURITIES')[0].split()[1:]
+    secs = [secs[i:i+3] for i in range(0,len(secs),3)]
+    secs = map(lambda x: (x[0], float(x[1]), float(x[2])), secs)
+    return secs
+
 def order_book():
-    for order in orders():
         print order
+
+# alpha():
+
+def stock_exchange():
+    secs = securities()
+    se = 0
+    for sec in secs:
+        se += sec[1]
+    return se
+
+print stock_exchange()
