@@ -19,8 +19,8 @@ def save_orders(time):
     try:
         for t in range(time):
             print 'Saving time step', t
-            sleep(1)
-            for o in orders():
+            client.sleep(.1)
+            for o in client.orders():
                 if o[0] == 'BID':
                     c.execute("INSERT INTO bids VALUES (?, ?, ?, ?)",
                         [t,o[1],o[2],o[3]])
@@ -37,10 +37,10 @@ def retrieve_orders(asks = True):
     prices = {}
     table = 'asks' if asks else 'bids'
     pricefunc = 'MIN' if asks else 'MAX'
-    for sym in tickers:
+    for sym in client.tickers:
         prices[sym] = c.execute('SELECT {}(val) FROM {} WHERE sym=? GROUP BY time ORDER BY time'
                 .format(pricefunc, table), (sym, )).fetchall() 
-        prices[sym] = map(itemgetter(0), prices[sym])
+        prices[sym] = map(client.itemgetter(0), prices[sym])
         conn.commit()
     conn.close()
     return prices
