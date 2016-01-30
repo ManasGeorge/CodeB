@@ -89,6 +89,25 @@ def highest_dividend(debug = False):
         print tabulate(table, headers = ["Ticker", "Dividend per Share", "Total Dividend", "Shares being traded"]),
     return table
 
+def dividend_map(debug = False):
+    nshares = defaultdict(lambda: 0)
+    for order in orders():
+        nshares[order[1]] = nshares[order[1]] + order[3]
+    sortsec =  sorted(securities(),
+            key=(lambda x: x[1] * x[2] / nshares[x[0]]), 
+            reverse=True)
+    table = map(lambda sec: 
+            [sec[0], sec[1] * sec[2] / nshares[sec[0]], 
+                sec[1] * sec[2], 
+                nshares[sec[0]] / 2], 
+            sortsec)
+    if debug:
+        print tabulate(table, headers = ["Ticker", "Dividend per Share", "Total Dividend", "Shares being traded"]),
+    mapDiv = {}
+    for item in table:
+        mapDiv[item[0]] = item[1]
+    return mapDiv
+
 def map_tickers(command):
     commands = map(lambda x: command + ' ' + x, tickers)
     return run(user, password, *commands)
