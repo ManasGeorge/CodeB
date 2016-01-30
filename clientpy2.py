@@ -5,26 +5,30 @@ from operator import itemgetter
 user = 'Cactus'
 password = 'carnot'
 tickers = ['AAPL', 'C', 'CMG', 'DELL', 'DIS', 'F', 'GM', 'IBM', 'JPY', 'XOM'] 
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+def main():
+    HOST, PORT = "codebb.cloudapp.net", 17429
+
+    try:
+        sock.connect((HOST, PORT))
+        print orders()
+        # Stuff to do goes here
+    finally:
+        sock.close()
     
 def run(user, password, *commands):
-    HOST, PORT = "codebb.cloudapp.net", 17429
     
     data=user + " " + password + "\n" + "\n".join(commands) + "\nCLOSE_CONNECTION\n"
 
     lines = []
-    try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        sock.connect((HOST, PORT))
-        sock.sendall(data)
-        sfile = sock.makefile()
+    sock.sendall(data)
+    sfile = sock.makefile()
+    rline = sfile.readline()
+    while rline:
+        lines.append(rline)
         rline = sfile.readline()
-        while rline:
-            #  print(rline.strip())
-            lines.append(rline)
-            rline = sfile.readline()
-    finally:
-        sock.close()
+
     return lines
 
 def subscribe(user, password):
