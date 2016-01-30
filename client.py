@@ -84,10 +84,6 @@ def highest_dividend(debug = False):
     table = map(lambda sec:
             [sec[0], sec[1] * sec[2] / nshares[sec[0]],
                 sec[1] * sec[2],
-                nshares[sec[0]]],
-    table = map(lambda sec:
-            [sec[0], sec[1] * sec[2] / nshares[sec[0]],
-                sec[1] * sec[2],
                 nshares[sec[0]] / 2], sortsec)
     if debug:
         print tabulate(table, headers = ["Ticker", "Dividend per Share", "Total Dividend", "Shares being traded"]),

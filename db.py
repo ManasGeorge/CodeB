@@ -37,12 +37,10 @@ def retrieve_orders(asks = True):
     prices = {}
     table = 'asks' if asks else 'bids'
     pricefunc = 'MIN' if asks else 'MAX'
-    for sym in client.tickers:
+    for sym in tickers:
         prices[sym] = c.execute('SELECT {}(val) FROM {} WHERE sym=? GROUP BY time ORDER BY time'
                 .format(pricefunc, table), (sym, )).fetchall()
         prices[sym] = map(itemgetter(0), prices[sym])
-                .format(pricefunc, table), (sym, )).fetchall()
-        prices[sym] = map(client.itemgetter(0), prices[sym])
         conn.commit()
     conn.close()
     return prices
