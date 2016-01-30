@@ -8,7 +8,7 @@ def buy(sym):
     # Find lowest ask price
     o = min(filter(lambda x: x[0] == 'ASK' and x[1] == sym, orders()), 
             key = itemgetter(2))
-    n = int(floor(0.2 * balance() / o[2]))
+    n = int(floor(0.05 * balance() / o[2]))
     run(user, password, 'BID {} {} {}'.format(sym, o[2], n))
 
 def sell(sym):
@@ -34,7 +34,6 @@ def main():
         print '\nMoney: ', balance()
 
         sleep(1)
-        clear_all()
         avgs = sorted(moving_average(), key=lambda tup: (tup[2] - tup[1]))
 
         j = 0
@@ -48,10 +47,23 @@ def main():
             j += 1
             sell(avgs[j][0])
 
+        if i % 10 == 0:
+            hd = highest_dividend()
+            hd.reverse()
+            sold = 0
+            for stock in hd:
+                if stock in map(itemgetter(1), my_orders()):
+                    sell(stock)
+                    sold = sold + 1
+                    if sold > 3:
+                        break
+
         print 'My Orders: '
         my_orders(True)
 
         print 'My Portfolio: '
         my_securities(True)
+
+        print 'Best: '
 
 main()

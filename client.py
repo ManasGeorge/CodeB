@@ -72,6 +72,7 @@ def my_orders(debug = False):
     if(debug):
         print tabulate(secs)
         print
+    return secs
 
 def highest_dividend(debug = False):
     nshares = defaultdict(lambda: 0)
