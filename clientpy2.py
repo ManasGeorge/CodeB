@@ -1,6 +1,7 @@
 import socket
 import sys
 from operator import itemgetter
+from time import sleep
 
 user = 'Cactus'
 password = 'carnot'
@@ -8,19 +9,19 @@ tickers = ['AAPL', 'C', 'CMG', 'DELL', 'DIS', 'F', 'GM', 'IBM', 'JPY', 'XOM']
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def main():
+    global sock
     HOST, PORT = "codebb.cloudapp.net", 17429
-
     try:
         sock.connect((HOST, PORT))
-        print orders()
-        # Stuff to do goes here
+        divs = highest_dividend()
+        divs = map(lambda x: (x[0], x[1]*x[2]), divs)
+        print highest_dividend()
     finally:
         sock.close()
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
 def run(user, password, *commands):
-    
     data=user + " " + password + "\n" + "\n".join(commands) + "\nCLOSE_CONNECTION\n"
-
     lines = []
     sock.sendall(data)
     sfile = sock.makefile()
@@ -28,7 +29,6 @@ def run(user, password, *commands):
     while rline:
         lines.append(rline)
         rline = sfile.readline()
-
     return lines
 
 def subscribe(user, password):
@@ -57,7 +57,7 @@ def securities():
     return secs
 
 def highest_dividend():
-    return sorted(pull_stocks(),
+    return sorted(securities(),
             key=(lambda x: x[1] * x[2]), 
             reverse=True)
 
@@ -83,3 +83,5 @@ def orders():
 # Total value (cash + stocks)
 def portfolio():
     return
+
+main()
