@@ -1,8 +1,10 @@
 import socket
 import sys
+from operator import itemgetter
 
 user = 'Cactus'
 password = 'carnot'
+tickers = ['AAPL', 'C', 'CMG', 'DELL', 'DIS', 'F', 'GM', 'IBM', 'JPY', 'XOM'] 
     
 def run(user, password, *commands):
     HOST, PORT = "codebb.cloudapp.net", 17429
@@ -18,7 +20,7 @@ def run(user, password, *commands):
         sfile = sock.makefile()
         rline = sfile.readline()
         while rline:
-            print(rline.strip())
+            #  print(rline.strip())
             lines.append(rline)
             rline = sfile.readline()
     finally:
@@ -48,4 +50,9 @@ def pull_stocks():
     secs = run(user,password,'SECURITIES')[0].split()[1:]
     secs = [secs[i:i+4] for i in range(0,len(secs),4)]
     secs = map(lambda x: (x[0], float(x[1]), float(x[2]), float(x[3])), secs)
-    print secs
+    return secs
+
+def highest_dividend():
+    return sorted(pull_stocks(),
+            key=(lambda x: x[1] * x[2]), 
+            reverse=True)
