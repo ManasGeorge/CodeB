@@ -56,3 +56,13 @@ def highest_dividend():
     return sorted(pull_stocks(),
             key=(lambda x: x[1] * x[2]), 
             reverse=True)
+
+# Clears all asks and bids
+def clear_all():
+    clears = map(lambda x: 'CLEAR_BID ' + x, tickers)
+    clears.extend(map(lambda x: 'CLEAR_ASK ' + x, tickers))
+    return run(user, password, *clears)
+
+# Total value (cash + stocks)
+def portfolio():
+    return
