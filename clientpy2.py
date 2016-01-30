@@ -6,7 +6,6 @@ from collections import defaultdict
 
 user = 'Cactus'
 password = 'carnot'
-tickers = map(itemgetter(0), securities())
 
 # Server connection overhead is low enough that we can afford to use multiple calls
 # to run for securities() and order() and stuff.
@@ -65,8 +64,7 @@ def highest_dividend():
             key=(lambda x: x[1] * x[2] / nshares[x[0]]), 
             reverse=True)
     for sec in sortsec:
-        #  ords = filter(lambda x: x[1] == sec[0], orders())
-        print sec[0], sec[1] * sec[2] / ords[0][3]
+        print sec[0], sec[1] * sec[2] / nshares[sec[0]], sec[1] * sec[2], nshares[sec[0]]
 
 def map_tickers(command):
     commands = map(lambda x: command + ' ' + x, tickers)
@@ -83,9 +81,9 @@ def orders():
     ords = map_tickers('ORDERS')
     ords = map(lambda x: x.split()[1:], ords) # Remove 'SECURITY_ORDERS_OUT' and split
     ords = map(lambda x: [x[i:i+4] for i in range(0,len(x),4)], ords) # Split each bid/ask into separate list
-    return ords
     ords = [bidask for order in ords for bidask in order]
     ords = map(lambda x: (x[0], x[1], float(x[2]), int(x[3])), ords)
+    return ords
 
 # Total value (cash + stocks)
 def portfolio():
@@ -94,3 +92,5 @@ def portfolio():
 def order_book():
     for order in orders():
         print order
+
+tickers = map(itemgetter(0), securities())
