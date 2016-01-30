@@ -18,15 +18,18 @@ def run(user, password, *commands):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+        lines = []
         sock.connect((HOST, PORT))
         sock.sendall(data)
         sfile = sock.makefile()
         rline = sfile.readline()
         while rline:
-            print(rline.strip())
+            #  print(rline.strip())
             rline = sfile.readline()
+            lines.append(rline)
     finally:
         sock.close()
+    return lines
 
 def subscribe(user, password):
     HOST, PORT = "codebb.cloudapp.net", 17429
@@ -80,5 +83,3 @@ def orders():
 # Total value (cash + stocks)
 def portfolio():
     return
-
-main()
